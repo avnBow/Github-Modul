@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modul Praktikum: Git Ignore - Setana</title>
+    <style>
+      :root {
+        --primary: #2ea44f;
+        --bg-dark: #0d1117;
+        --text-light: #c9d1d9;
+        --card-bg: #161b22;
+        --border: #30363d;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        width: 100%;
+        max-width: 800px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+      h1,
+      h2 {
+        color: #ffffff;
+        margin-top: 0;
+      }
+      h1 {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+        font-size: 1.8em;
+      }
+
+      /* Anti-Copas Class */
+      .no-select {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .step-container {
+        display: none;
+        animation: fadeIn 0.5s;
+      }
+      .step-container.active {
+        display: block;
+      }
+
+      .code-block {
+        background-color: #000;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", Courier, monospace;
+        color: #58a6ff;
+        border: 1px solid var(--border);
+        margin: 15px 0;
+        position: relative;
+      }
+      .code-block::before {
+        content: "$";
+        color: #8b949e;
+        margin-right: 10px;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+      button {
+        background-color: #21262d;
+        color: #c9d1d9;
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+      button:hover:not(:disabled) {
+        background-color: #30363d;
+        border-color: #8b949e;
+      }
+      button.btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border-color: rgba(27, 31, 36, 0.15);
+      }
+      button.btn-primary:hover {
+        background-color: #2c974b;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .progress {
+        text-align: center;
+        color: #8b949e;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+      a {
+        color: #58a6ff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="no-select">
+    <div class="container">
+      <h1>🚀 Modul Praktikum: Memahami .gitignore</h1>
+      <div class="progress" id="progressText">Langkah 1 dari 6</div>
+
+      <!-- Step 1 -->
+      <div class="step-container active" id="step1">
+        <h2>1. Membuat File Rahasia Percobaan</h2>
+        <p>
+          Pertama-tama, pastikan kamu berada di dalam folder
+          <code>proyek-pertamaku</code> yang sudah kita buat sebelumnya. Mari
+          kita buat sebuah file bernama <code>.env</code>. File ini biasanya
+          berisi password atau API Key yang
+          <strong>sangat terlarang</strong> untuk diunggah ke GitHub.
+        </p>
+        <div class="code-block">echo "PASSWORD=rahasia123" > .env</div>
+        <p>Sekarang coba cek status Git kamu:</p>
+        <div class="code-block">git status</div>
+        <p>
+          Kamu akan melihat <code>.env</code> berwarna merah. Artinya, Git
+          bersiap untuk melacak dan mengunggahnya. Gawat!
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-container" id="step2">
+        <h2>2. Membuat File .gitignore</h2>
+        <p>
+          Untuk mencegah Git melacak file <code>.env</code>, kita harus
+          mendaftarkannya ke dalam file ajaib bernama
+          <code>.gitignore</code> (titik gitignore).
+        </p>
+        <p>
+          Mari kita buat file <code>.gitignore</code> dan langsung isi dengan
+          teks <code>.env</code> di dalamnya:
+        </p>
+        <div class="code-block">echo ".env" > .gitignore</div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-container" id="step3">
+        <h2>3. Melihat Keajaiban .gitignore</h2>
+        <p>Sekarang, coba jalankan lagi perintah status:</p>
+        <div class="code-block">git status</div>
+        <p>
+          <strong>Ajaib, kan? 🎉</strong> File <code>.env</code> sekarang
+          menghilang dari daftar merah! Sebagai gantinya, Git mendeteksi adanya
+          file baru bernama <code>.gitignore</code>.
+        </p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-container" id="step4">
+        <h2>4. Menambahkan Aturan Tambahan</h2>
+        <p>
+          File <code>.gitignore</code> bisa diisi banyak aturan sekaligus.
+          Misalnya kita ingin mengabaikan seluruh folder bernama
+          <code>node_modules</code> (folder bengkak bawaan Node.js) dan semua
+          file yang berakhiran <code>.log</code>.
+        </p>
+        <p>
+          Kita akan menggunakan tanda <code>>></code> (dua kurung siku) agar
+          teksnya <em>ditambahkan</em> ke baris bawah, bukan menghapus teks
+          sebelumnya:
+        </p>
+        <div class="code-block">echo "node_modules/" >> .gitignore</div>
+        <div class="code-block">echo "*.log" >> .gitignore</div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-container" id="step5">
+        <h2>5. Cek Isi File .gitignore</h2>
+        <p>
+          Untuk memastikan aturan-aturan tersebut sudah masuk ke dalam file,
+          kita bisa membacanya menggunakan perintah <code>cat</code> (atau
+          membukanya di Text Editor/VS Code):
+        </p>
+        <div class="code-block">cat .gitignore</div>
+        <p>
+          Seharusnya terminalmu akan menampilkan tiga baris: <code>.env</code>,
+          <code>node_modules/</code>, dan <code>*.log</code>.
+        </p>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step-container" id="step6">
+        <h2>6. Simpan File .gitignore</h2>
+        <p>
+          Meskipun file rahasianya tidak kita simpan, file
+          <code>.gitignore</code> itu sendiri <strong>wajib</strong> kita simpan
+          dan kita <em>push</em> ke GitHub agar teman satu tim kita juga
+          memiliki aturan perlindungan yang sama.
+        </p>
+        <p>
+          Gunakan perintah andalan kita untuk memasukkan dan menyimpan
+          perubahan:
+        </p>
+        <div class="code-block">git add .</div>
+        <div class="code-block">
+          git commit -m "Menambahkan .gitignore untuk melindungi file rahasia"
+        </div>
+        <p>Lalu dorong ke GitHub:</p>
+        <div class="code-block">git push origin main</div>
+        <p>
+          <strong>Selesai!</strong> Sekarang repositorimu aman dari kebocoran
+          data rahasia.
+        </p>
+      </div>
+
+      <div class="navigation">
+        <button id="prevBtn" onclick="changeStep(-1)" disabled>
+          Pelajaran Sebelumnya
+        </button>
+        <button id="nextBtn" class="btn-primary" onclick="changeStep(1)">
+          Selanjutnya
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- LOKASI SCRIPT ANTI COPAS ---
+      document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        alert("Ssstt... Klik Kanan dimatikan untuk modul ini.");
+      });
+
+      document.addEventListener("copy", (event) => {
+        event.preventDefault();
+        alert(
+          "Dilarang copas! Ayo, mengetik akan membuatmu lebih terbiasa dengan Git.",
+        );
+      });
+
+      document.addEventListener("cut", (event) => {
+        event.preventDefault();
+      });
+
+      // --- LOKASI SCRIPT NAVIGASI STEP-BY-STEP ---
+      let currentStep = 1;
+      const totalSteps = 6;
+
+      function changeStep(n) {
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("active");
+        currentStep += n;
+
+        if (currentStep < 1) currentStep = 1;
+        if (currentStep > totalSteps) currentStep = totalSteps;
+
+        document.getElementById(`step${currentStep}`).classList.add("active");
+        document.getElementById("progressText").innerText =
+          `Langkah ${currentStep} dari ${totalSteps}`;
+
+        document.getElementById("prevBtn").disabled = currentStep === 1;
+
+        const nextBtn = document.getElementById("nextBtn");
+        if (currentStep === totalSteps) {
+          nextBtn.innerText = "Selesai";
+          nextBtn.disabled = true;
+          nextBtn.classList.remove("btn-primary");
+        } else {
+          nextBtn.innerText = "Selanjutnya";
+          nextBtn.disabled = false;
+          nextBtn.classList.add("btn-primary");
+        }
+      }
+    </script>
+  </body>
+</html>
