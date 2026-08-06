@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modul Praktikum: Membuat Repo & Push ke GitHub - Setana</title>
+    <style>
+      :root {
+        --primary: #2ea44f;
+        --bg-dark: #0d1117;
+        --text-light: #c9d1d9;
+        --card-bg: #161b22;
+        --border: #30363d;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        width: 100%;
+        max-width: 800px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+      h1,
+      h2 {
+        color: #ffffff;
+        margin-top: 0;
+      }
+      h1 {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+        font-size: 1.8em;
+      }
+
+      /* Anti-Copas Class */
+      .no-select {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .step-container {
+        display: none;
+        animation: fadeIn 0.5s;
+      }
+      .step-container.active {
+        display: block;
+      }
+
+      .code-block {
+        background-color: #000;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", Courier, monospace;
+        color: #58a6ff;
+        border: 1px solid var(--border);
+        margin: 15px 0;
+        position: relative;
+      }
+      .code-block::before {
+        content: "$";
+        color: #8b949e;
+        margin-right: 10px;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+      button {
+        background-color: #21262d;
+        color: #c9d1d9;
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+      button:hover:not(:disabled) {
+        background-color: #30363d;
+        border-color: #8b949e;
+      }
+      button.btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border-color: rgba(27, 31, 36, 0.15);
+      }
+      button.btn-primary:hover {
+        background-color: #2c974b;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .progress {
+        text-align: center;
+        color: #8b949e;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+      a {
+        color: #58a6ff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="no-select">
+    <div class="container">
+      <h1>🚀 Modul Praktikum: Membuat Repo & Push ke GitHub</h1>
+      <div class="progress" id="progressText">Langkah 1 dari 6</div>
+
+      <!-- Step 1 -->
+      <div class="step-container active" id="step1">
+        <h2>1. Buat Repository Kosong di GitHub</h2>
+        <p>
+          Langkah pertama dilakukan melalui <em>browser</em>, bukan terminal:
+        </p>
+        <ol>
+          <li>
+            Buka <a href="https://github.com" target="_blank">github.com</a> dan
+            pastikan sudah <em>login</em>.
+          </li>
+          <li>
+            Klik tombol hijau <strong>New</strong> atau ikon
+            <strong>+</strong> di pojok kanan atas lalu pilih
+            <em>New repository</em>.
+          </li>
+          <li>
+            Isi <strong>Repository name</strong> (misal:
+            <code>proyek-pertamaku</code>).
+          </li>
+          <li>Biarkan pilihan Public/Private sesuai keinginanmu.</li>
+          <li>
+            <strong>PENTING:</strong> Jangan centang <em>Add a README file</em>,
+            <em>.gitignore</em>, atau <em>license</em>. Biarkan repository
+            benar-benar kosong!
+          </li>
+          <li>Klik tombol hijau <strong>Create repository</strong>.</li>
+        </ol>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-container" id="step2">
+        <h2>2. Inisialisasi Repository Lokal</h2>
+        <p>
+          Sekarang buka Terminal (Mac/Linux) atau Git Bash (Windows). Kita akan
+          membuat folder lokal dan mengubahnya menjadi repository Git.
+        </p>
+        <p>
+          Buat folder baru (samakan namanya dengan di GitHub agar tidak
+          bingung):
+        </p>
+        <div class="code-block">mkdir proyek-pertamaku</div>
+        <p>Masuk ke dalam folder tersebut:</p>
+        <div class="code-block">cd proyek-pertamaku</div>
+        <p>Jadikan folder ini sebagai repository Git:</p>
+        <div class="code-block">git init</div>
+      </div>
+
+      <!-- Step 3 (Direvisi dengan git add .) -->
+      <div class="step-container" id="step3">
+        <h2>3. Membuat File dan Melakukan Commit</h2>
+        <p>
+          Mari kita buat dua file percobaan. Kita akan menggunakan
+          <code>git add .</code> untuk memasukkan
+          <strong>semua file sekaligus</strong> ke dalam
+          <em>staging area</em> tanpa perlu menyebutkan namanya satu-satu.
+        </p>
+        <p>
+          Buat file <code>README.md</code> dan <code>index.html</code> (bisa
+          diketik via terminal, atau buat manual pakai text editor):
+        </p>
+        <div class="code-block">echo "# Halo GitHub!" > README.md</div>
+        <div class="code-block">
+          echo "&lt;h1&gt;Proyek Pertamaku&lt;/h1&gt;" > index.html
+        </div>
+        <p>
+          Tambahkan <strong>semua file</strong> tersebut agar dilacak oleh Git
+          (tanda titik <code>.</code> berarti direktori saat ini):
+        </p>
+        <div class="code-block">git add .</div>
+        <p>Simpan perubahan (commit) dengan pesan yang jelas:</p>
+        <div class="code-block">
+          git commit -m "Commit pertamaku: menambahkan file README dan index"
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-container" id="step4">
+        <h2>4. Menyesuaikan Nama Branch Utama</h2>
+        <p>
+          Secara bawaan (<em>default</em>), Git versi lama menamai cabang
+          utamanya dengan <code>master</code>. Namun, standar GitHub sekarang
+          menggunakan <code>main</code>. Mari kita ubah agar selaras!
+        </p>
+        <div class="code-block">git branch -M main</div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-container" id="step5">
+        <h2>5. Menambahkan Remote GitHub (SSH)</h2>
+        <p>
+          Git lokalmu belum tahu mau dikirim ke mana file-filenya. Kita harus
+          menambahkan "alamat tujuan" (remote) repository GitHub yang kamu buat
+          di Langkah 1.
+        </p>
+        <p>
+          Karena kita sebelumnya sudah menggunakan SSH, kita gunakan alamat
+          versi SSH.
+          <em
+            >(Ganti <code>username</code> dengan username akun GitHub-mu, dan
+            <code>proyek-pertamaku</code> dengan nama repomu!)</em
+          >
+        </p>
+        <div class="code-block">
+          git remote add origin git@github.com:username/proyek-pertamaku.git
+        </div>
+        <p>Untuk mengecek apakah alamat sudah masuk, ketik perintah ini:</p>
+        <div class="code-block">git remote -v</div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step-container" id="step6">
+        <h2>6. Push (Dorong) Kode ke GitHub</h2>
+        <p>
+          Langkah terakhir! Mari kita dorong <em>commit</em> lokal kita menuju
+          server GitHub.
+        </p>
+        <div class="code-block">git push -u origin main</div>
+        <p>
+          <strong>Selamat! 🎉</strong> Coba buka kembali halaman GitHub-mu di
+          browser dan <em>refresh</em>. File <code>README.md</code> dan
+          <code>index.html</code> yang kamu buat sekarang sudah nangkring dengan
+          cantik di sana!
+        </p>
+      </div>
+
+      <div class="navigation">
+        <button id="prevBtn" onclick="changeStep(-1)" disabled>
+          Pelajaran Sebelumnya
+        </button>
+        <button id="nextBtn" class="btn-primary" onclick="changeStep(1)">
+          Selanjutnya
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- LOKASI SCRIPT ANTI COPAS ---
+      document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        alert("Ssstt... Klik Kanan dimatikan untuk modul ini.");
+      });
+
+      document.addEventListener("copy", (event) => {
+        event.preventDefault();
+        alert(
+          "Dilarang copas! Biasakan mengetik perintah secara manual agar cepat hafal.",
+        );
+      });
+
+      document.addEventListener("cut", (event) => {
+        event.preventDefault();
+      });
+
+      // --- LOKASI SCRIPT NAVIGASI STEP-BY-STEP ---
+      let currentStep = 1;
+      const totalSteps = 6;
+
+      function changeStep(n) {
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("active");
+        currentStep += n;
+
+        if (currentStep < 1) currentStep = 1;
+        if (currentStep > totalSteps) currentStep = totalSteps;
+
+        document.getElementById(`step${currentStep}`).classList.add("active");
+        document.getElementById("progressText").innerText =
+          `Langkah ${currentStep} dari ${totalSteps}`;
+
+        document.getElementById("prevBtn").disabled = currentStep === 1;
+
+        const nextBtn = document.getElementById("nextBtn");
+        if (currentStep === totalSteps) {
+          nextBtn.innerText = "Selesai";
+          nextBtn.disabled = true;
+          nextBtn.classList.remove("btn-primary");
+        } else {
+          nextBtn.innerText = "Selanjutnya";
+          nextBtn.disabled = false;
+          nextBtn.classList.add("btn-primary");
+        }
+      }
+    </script>
+  </body>
+</html>
