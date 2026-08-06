@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modul Praktikum: Setup GitHub Lokal & SSH - Setana</title>
+    <title>Modul Praktikum: Setup Git & Konfigurasi SSH - Setana</title>
     <style>
       :root {
         --primary: #2ea44f;
@@ -138,8 +138,8 @@
   </head>
   <body class="no-select">
     <div class="container">
-      <h1>🚀 Modul Praktikum: Setup GitHub & Konfigurasi SSH</h1>
-      <div class="progress" id="progressText">Langkah 1 dari 8</div>
+      <h1>🚀 Modul Praktikum: Setup Git & Konfigurasi SSH</h1>
+      <div class="progress" id="progressText">Langkah 1 dari 7</div>
 
       <!-- Step 1 -->
       <div class="step-container active" id="step1">
@@ -185,7 +185,7 @@
         </div>
       </div>
 
-      <!-- Step 4 (Baru: Cek Existing SSH) -->
+      <!-- Step 4 -->
       <div class="step-container" id="step4">
         <h2>4. Cek SSH Key yang Sudah Ada</h2>
         <p>
@@ -204,7 +204,7 @@
         </p>
       </div>
 
-      <!-- Step 5 (Disesuaikan: Generate SSH) -->
+      <!-- Step 5 -->
       <div class="step-container" id="step5">
         <h2>5. Membuat (Generate) SSH Key Baru</h2>
         <p>
@@ -218,7 +218,7 @@
         </div>
       </div>
 
-      <!-- Step 6 (Pasang di GitHub) -->
+      <!-- Step 6 -->
       <div class="step-container" id="step6">
         <h2>6. Memasang SSH Key ke Akun GitHub</h2>
         <p>
@@ -242,38 +242,26 @@
         </p>
       </div>
 
-      <!-- Step 7 -->
+      <!-- Step 7 (Baru: Tes SSH) -->
       <div class="step-container" id="step7">
-        <h2>7. Inisialisasi Repository Lokal</h2>
-        <p>Ayo buat folder proyek barumu dan buat sebuah commit pertama!</p>
-        <div class="code-block">mkdir proyek-pertama</div>
-        <div class="code-block">cd proyek-pertama</div>
-        <div class="code-block">git init</div>
-        <div class="code-block">echo "# Proyek dengan SSH" > README.md</div>
-        <div class="code-block">git add README.md</div>
-        <div class="code-block">
-          git commit -m "Commit pertama pake SSH nih"
-        </div>
-      </div>
-
-      <!-- Step 8 -->
-      <div class="step-container" id="step8">
-        <h2>8. Push ke GitHub via SSH</h2>
+        <h2>7. Tes Koneksi SSH ke GitHub</h2>
         <p>
-          Buat repository kosong di akun GitHub-mu. Pastikan kamu memilih tab
-          <strong>SSH</strong> (bukan HTTPS) saat menyalin URL-nya. Lalu
-          jalankan perintah ini:
+          Sekarang, mari kita buktikan apakah konfigurasi SSH kamu sudah
+          berhasil terhubung dengan GitHub. Jalankan perintah tes koneksi
+          berikut di terminalmu:
         </p>
-        <div class="code-block">
-          git remote add origin git@github.com:username/proyek-pertama.git
-        </div>
-        <div class="code-block">git branch -M main</div>
-        <div class="code-block">git push -u origin main</div>
+        <div class="code-block">ssh -T git@github.com</div>
         <p>
           Jika muncul pertanyaan (<em
             >Are you sure you want to continue connecting?</em
           >), ketik <strong>yes</strong> lalu Enter.
-          <strong>Selesai!</strong> Kodinganmu sudah mendarat di GitHub.
+        </p>
+        <p>
+          <strong>Berhasil!</strong> Jika kamu melihat pesan yang berbunyi
+          <em
+            >"Hi username! You've successfully authenticated, but GitHub does
+            not provide shell access."</em
+          >, artinya komputermu sudah sukses tersambung ke GitHub dengan aman.
         </p>
       </div>
 
@@ -305,7 +293,7 @@
 
       // --- LOKASI SCRIPT NAVIGASI STEP-BY-STEP ---
       let currentStep = 1;
-      const totalSteps = 8;
+      const totalSteps = 7; // Diubah menjadi 7 langkah
 
       function changeStep(n) {
         document
