@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modul Praktikum: Git Restore - Setana</title>
+    <style>
+      :root {
+        --primary: #2ea44f;
+        --bg-dark: #0d1117;
+        --bg-panel: #161b22;
+        --text-light: #c9d1d9;
+        --border: #30363d;
+        --accent: #58a6ff;
+        --warning: #ff7b72;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        min-height: 100vh;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 15px;
+      }
+
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+      }
+
+      /* Layout 2 Kolom */
+      .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section {
+        background-color: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 25px;
+        flex: 1;
+        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .section h2 {
+        color: var(--accent);
+        margin-top: 0;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+      }
+
+      /* Visualisasi Git Area */
+      .git-diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 30px 0;
+        padding: 20px;
+        background: #010409;
+        border-radius: 8px;
+        border: 1px dashed var(--border);
+      }
+
+      .git-box {
+        background-color: #21262d;
+        border: 1px solid #8b949e;
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        position: relative;
+      }
+
+      .git-box span {
+        display: block;
+        font-size: 0.85em;
+        color: #8b949e;
+        font-weight: normal;
+        margin-top: 5px;
+      }
+
+      .arrow-down {
+        text-align: center;
+        color: var(--warning);
+        font-weight: bold;
+        font-size: 0.9em;
+      }
+
+      .arrow-down::before {
+        content: "↑ git restore";
+        display: inline-block;
+        background: rgba(255, 123, 114, 0.1);
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid var(--warning);
+      }
+
+      .arrow-down.staged::before {
+        content: "↑ git restore --staged";
+        color: var(--accent);
+        border-color: var(--accent);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      /* Anti-Copas Class */
+      .no-select {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* Praktikum Steps */
+      .step-container {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+      }
+      .step-container.active {
+        display: block;
+      }
+
+      .code-block {
+        background-color: #000;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", Courier, monospace;
+        color: #7ee787;
+        border: 1px solid var(--border);
+        margin: 15px 0;
+      }
+      .code-block::before {
+        content: "$";
+        color: #8b949e;
+        margin-right: 10px;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+
+      button {
+        background-color: #21262d;
+        color: #c9d1d9;
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+      button:hover:not(:disabled) {
+        background-color: #30363d;
+      }
+      button.btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border-color: rgba(27, 31, 36, 0.15);
+      }
+      button.btn-primary:hover {
+        background-color: #2c974b;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .progress {
+        text-align: center;
+        color: #8b949e;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="no-select">
+    <div class="header">
+      <h1>🚀 Modul Praktikum: Git Restore</h1>
+      <p>
+        Pahami konsepnya di sebelah kiri, dan praktikkan perintahnya di sebelah
+        kanan.
+      </p>
+    </div>
+
+    <div class="main-container">
+      <div class="section materi-section">
+        <h2>📚 Materi & Konsep</h2>
+        <p>
+          Perintah <code>git restore</code> hadir sejak Git 2.23 untuk
+          menggantikan sebagian fungsi <code>git checkout</code>. Fungsinya
+          sangat spesifik: <strong>membatalkan perubahan pada file</strong>.
+        </p>
+
+        <h3>Visualisasi Git Area</h3>
+        <p>
+          Perhatikan dari mana dan ke mana file Anda dikembalikan saat
+          menggunakan Git Restore:
+        </p>
+
+        <div class="git-diagram">
+          <div class="git-box" style="border-color: #2ea44f">
+            📁 3. Local Repository (HEAD)
+            <span>Kondisi file yang sudah aman di-commit.</span>
+          </div>
+
+          <div class="arrow-down staged"></div>
+
+          <div class="git-box" style="border-color: var(--accent)">
+            📦 2. Staging Area (Index)
+            <span>File yang sudah di-add tapi belum di-commit.</span>
+          </div>
+
+          <div class="arrow-down"></div>
+
+          <div class="git-box" style="border-color: var(--warning)">
+            💻 1. Working Directory
+            <span>Folder tempat Anda mengetik/mengedit file saat ini.</span>
+          </div>
+        </div>
+
+        <ul>
+          <li>
+            <code>git restore</code> menarik data dari
+            <strong>Staging</strong> kembali ke
+            <strong>Working Directory</strong>.
+          </li>
+          <li>
+            <code>git restore --staged</code> menarik data dari
+            <strong>Local Repo</strong> kembali ke
+            <strong>Staging Area</strong>.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section praktik-section">
+        <h2>💻 Praktikum Step-by-Step</h2>
+        <div class="progress" id="progressText">Langkah 1 dari 4</div>
+
+        <div class="step-container active" id="step1">
+          <h3>1. Membatalkan Perubahan (Belum di-Stage)</h3>
+          <p>
+            Misalkan Anda mengedit <code>index.html</code> (Working Directory)
+            tapi kodenya malah error. Anda belum melakukan <code>git add</code>.
+            Untuk membatalkan editan tersebut dan kembali ke kondisi terakhir:
+          </p>
+          <div class="code-block">git restore index.html</div>
+          <p>
+            Jika ingin membatalkan perubahan pada <strong>semua file</strong> di
+            folder saat ini:
+          </p>
+          <div class="code-block">git restore .</div>
+          <p style="color: var(--warning); font-size: 0.9em">
+            ⚠️ Hati-hati! Kode yang belum disave ke Git akan hilang permanen.
+          </p>
+        </div>
+
+        <div class="step-container" id="step2">
+          <h3>2. Membatalkan git add (Unstaging)</h3>
+          <p>
+            Anda tidak sengaja melakukan
+            <code>git add rahasia.txt</code> sehingga file masuk ke
+            <strong>Staging Area</strong>. Untuk menurunkannya kembali ke
+            Working Directory <strong>tanpa menghapus isi kodenya</strong>:
+          </p>
+          <div class="code-block">git restore --staged rahasia.txt</div>
+          <p>Untuk menurunkan semua file dari Staging sekaligus:</p>
+          <div class="code-block">git restore --staged .</div>
+        </div>
+
+        <div class="step-container" id="step3">
+          <h3>3. Membuang Perubahan Secara Total</h3>
+          <p>
+            File sudah di-stage (Staging Area), tapi Anda berubah pikiran. Anda
+            ingin mengeluarkan file itu dari Staging
+            <strong>DAN sekaligus menghapus semua perubahannya</strong> agar
+            kembali persis seperti commit terakhir:
+          </p>
+          <div class="code-block">
+            git restore --staged --worktree index.html
+          </div>
+        </div>
+
+        <div class="step-container" id="step4">
+          <h3>4. Mengambil File dari Masa Lalu</h3>
+          <p>
+            Anda bisa mengambil versi file dari commit terdahulu tanpa me-reset
+            seluruh proyek. Ambil <code>style.css</code> dari 2 commit yang
+            lalu:
+          </p>
+          <div class="code-block">git restore --source HEAD~2 style.css</div>
+          <p>Atau menggunakan ID Hash Commit spesifik:</p>
+          <div class="code-block">git restore --source 1a2b3c4 app.js</div>
+          <p><strong>🎉 Selamat! Praktikum Selesai!</strong></p>
+        </div>
+
+        <div class="navigation">
+          <button id="prevBtn" onclick="changeStep(-1)" disabled>
+            Pelajaran Sebelumnya
+          </button>
+          <button id="nextBtn" class="btn-primary" onclick="changeStep(1)">
+            Selanjutnya
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- ANTI COPAS INTERCEPTOR ---
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        alert("Ssstt... Klik Kanan dimatikan untuk modul ini.");
+      });
+
+      document.addEventListener("copy", (e) => {
+        e.preventDefault();
+        alert(
+          "Dilarang copas! Ayo ketik manual agar muscle memory kamu terbentuk.",
+        );
+      });
+
+      document.addEventListener("cut", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
+          e.preventDefault();
+          alert("Dilarang copas! Ayo ketik manual.");
+        }
+      });
+
+      // --- LOGIKA NAVIGASI PRAKTIKUM ---
+      let currentStep = 1;
+      const totalSteps = 4;
+
+      function changeStep(n) {
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("active");
+        currentStep += n;
+
+        if (currentStep < 1) currentStep = 1;
+        if (currentStep > totalSteps) currentStep = totalSteps;
+
+        document.getElementById(`step${currentStep}`).classList.add("active");
+        document.getElementById("progressText").innerText =
+          `Langkah ${currentStep} dari ${totalSteps}`;
+
+        document.getElementById("prevBtn").disabled = currentStep === 1;
+
+        const nextBtn = document.getElementById("nextBtn");
+        if (currentStep === totalSteps) {
+          nextBtn.innerText = "Selesai";
+          nextBtn.disabled = true;
+          nextBtn.classList.remove("btn-primary");
+        } else {
+          nextBtn.innerText = "Selanjutnya";
+          nextBtn.disabled = false;
+          nextBtn.classList.add("btn-primary");
+        }
+      }
+    </script>
+  </body>
+</html>
