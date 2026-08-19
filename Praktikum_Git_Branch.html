@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Modul Praktikum: Git Restore - Setana</title>
+    <title>Modul Praktikum: Git Branch & Merge - Setana</title>
     <style>
       :root {
         --primary: #2ea44f;
@@ -13,6 +13,8 @@
         --border: #30363d;
         --accent: #58a6ff;
         --warning: #ff7b72;
+        --success: #3fb950;
+        --branch: #a371f7;
       }
 
       body {
@@ -38,6 +40,13 @@
       .header h1 {
         color: #ffffff;
         margin: 0;
+      }
+
+      .subtitle {
+        color: var(--warning);
+        font-weight: bold;
+        font-size: 0.9em;
+        margin-top: 5px;
       }
 
       /* Layout 2 Kolom */
@@ -66,7 +75,7 @@
         padding-bottom: 10px;
       }
 
-      /* Visualisasi Git Area */
+      /* Visualisasi Git Branch & Merge */
       .git-diagram {
         display: flex;
         flex-direction: column;
@@ -76,16 +85,18 @@
         background: #010409;
         border-radius: 8px;
         border: 1px dashed var(--border);
+        align-items: center;
       }
 
       .git-box {
         background-color: #21262d;
-        border: 1px solid #8b949e;
+        border: 2px solid #8b949e;
         border-radius: 6px;
         padding: 15px;
         text-align: center;
         font-weight: bold;
         position: relative;
+        width: 80%;
       }
 
       .git-box span {
@@ -96,27 +107,23 @@
         margin-top: 5px;
       }
 
-      .arrow-down {
+      .branch-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .branch-box {
+        width: 48%;
+      }
+
+      .arrow-flow {
         text-align: center;
-        color: var(--warning);
+        color: var(--text-light);
         font-weight: bold;
-        font-size: 0.9em;
-      }
-
-      .arrow-down::before {
-        content: "↑ git restore";
-        display: inline-block;
-        background: rgba(255, 123, 114, 0.1);
-        padding: 5px 10px;
-        border-radius: 4px;
-        border: 1px solid var(--warning);
-      }
-
-      .arrow-down.staged::before {
-        content: "↑ git restore --staged";
-        color: var(--accent);
-        border-color: var(--accent);
-        background: rgba(88, 166, 255, 0.1);
+        font-size: 1.2em;
+        line-height: 1;
       }
 
       /* Anti-Copas Class */
@@ -143,11 +150,17 @@
         color: #7ee787;
         border: 1px solid var(--border);
         margin: 15px 0;
+        overflow-x: auto;
       }
-      .code-block::before {
-        content: "$";
-        color: #8b949e;
-        margin-right: 10px;
+
+      .explanation,
+      .info {
+        background: rgba(88, 166, 255, 0.1);
+        border-left: 4px solid var(--accent);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 0.95em;
       }
 
       .navigation {
@@ -205,122 +218,175 @@
   </head>
   <body class="no-select">
     <div class="header">
-      <h1>🚀 Modul Praktikum: Git Restore</h1>
-      <p>
-        Pahami konsepnya di sebelah kiri, dan praktikkan perintahnya di sebelah
-        kanan.
-      </p>
+      <h1>🚀 Modul Praktikum: Git Branch & Merge</h1>
+      <div class="subtitle">
+        (Mode Hardcore: Anti Copy-Paste. Wajib Ketik Manual!)
+      </div>
     </div>
 
     <div class="main-container">
       <div class="section materi-section">
         <h2>📚 Materi & Konsep</h2>
         <p>
-          Perintah <code>git restore</code> hadir sejak Git 2.23 untuk
-          menggantikan sebagian fungsi <code>git checkout</code>. Fungsinya
-          sangat spesifik: <strong>membatalkan perubahan pada file</strong>.
+          Dalam pengembangan software, kita seringkali perlu membuat fitur baru
+          atau bereksperimen tanpa merusak kode utama. Di sinilah
+          <strong>Branching</strong> berfungsi.
+        </p>
+        <p>
+          Bayangkan <em>branch</em> seperti semesta paralel. Anda bisa mengedit
+          kode di semesta tersebut, dan jika sudah sempurna, Anda
+          menggabungkannya kembali ke semesta utama (<strong>Merge</strong>).
         </p>
 
-        <h3>Visualisasi Git Area</h3>
+        <h3>Visualisasi Git Branching & Merging</h3>
         <p>
-          Perhatikan dari mana dan ke mana file Anda dikembalikan saat
-          menggunakan Git Restore:
+          Perhatikan bagaimana alur percabangan bekerja dalam riwayat Git Anda:
         </p>
 
         <div class="git-diagram">
-          <div class="git-box" style="border-color: #2ea44f">
-            📁 3. Local Repository (HEAD)
-            <span>Kondisi file yang sudah aman di-commit.</span>
+          <div class="git-box" style="border-color: var(--primary)">
+            🔵 4. Merge Commit (HEAD)
+            <span
+              >Pesan: "Merge branch 'fitur-login'"<br />Kode dari cabang
+              disatukan kembali ke main.</span
+            >
           </div>
 
-          <div class="arrow-down staged"></div>
+          <div class="arrow-flow">↖ &nbsp; &nbsp; &nbsp; &nbsp; ↗</div>
+
+          <div class="branch-container">
+            <div
+              class="git-box branch-box"
+              style="border-color: var(--success)"
+            >
+              🟢 3. main (Utama)
+              <span
+                >Jalur utama kode yang stabil. Berjalan paralel tanpa
+                terganggu.</span
+              >
+            </div>
+
+            <div class="git-box branch-box" style="border-color: var(--branch)">
+              🟣 3. fitur-login
+              <span
+                >Anda bebas bereksperimen dan melakukan commit di cabang
+                ini.</span
+              >
+            </div>
+          </div>
+
+          <div class="arrow-flow">↑ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+          <div class="arrow-flow">
+            ↗ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          </div>
 
           <div class="git-box" style="border-color: var(--accent)">
-            📦 2. Staging Area (Index)
-            <span>File yang sudah di-add tapi belum di-commit.</span>
-          </div>
-
-          <div class="arrow-down"></div>
-
-          <div class="git-box" style="border-color: var(--warning)">
-            💻 1. Working Directory
-            <span>Folder tempat Anda mengetik/mengedit file saat ini.</span>
+            🔵 1 & 2. Commit Awal
+            <span>Titik dimana branch baru dibuat (Bercabang).</span>
           </div>
         </div>
-
-        <ul>
-          <li>
-            <code>git restore</code> menarik data dari
-            <strong>Staging</strong> kembali ke
-            <strong>Working Directory</strong>.
-          </li>
-          <li>
-            <code>git restore --staged</code> menarik data dari
-            <strong>Local Repo</strong> kembali ke
-            <strong>Staging Area</strong>.
-          </li>
-        </ul>
       </div>
 
       <div class="section praktik-section">
         <h2>💻 Praktikum Step-by-Step</h2>
-        <div class="progress" id="progressText">Langkah 1 dari 4</div>
+        <div class="progress" id="progressText">Langkah 1 dari 5</div>
 
         <div class="step-container active" id="step1">
-          <h3>1. Membatalkan Perubahan (Belum di-Stage)</h3>
+          <h3>1. Persiapan & Membuat Branch</h3>
           <p>
-            Misalkan Anda mengedit <code>index.html</code> (Working Directory)
-            tapi kodenya malah error. Anda belum melakukan <code>git add</code>.
-            Untuk membatalkan editan tersebut dan kembali ke kondisi terakhir:
+            Mari kita buat repositori baru dan inisialisasi commit pertama.
+            Ketik perintah berikut secara berurutan:
           </p>
-          <div class="code-block">git restore index.html</div>
+          <pre class="code-block">
+mkdir latihan-branch 
+cd latihan-branch 
+git init echo "Halaman Utama" > index.html 
+git add index.html 
+git commit -m "Commit Pertama diMain"
+          </pre>
+
           <p>
-            Jika ingin membatalkan perubahan pada <strong>semua file</strong> di
-            folder saat ini:
+            Sekarang, buat cabang (branch) baru bernama
+            <strong>fitur-login</strong> dan langsung berpindah ke cabang
+            tersebut:
           </p>
-          <div class="code-block">git restore .</div>
-          <p style="color: var(--warning); font-size: 0.9em">
-            ⚠️ Hati-hati! Kode yang belum disave ke Git akan hilang permanen.
-          </p>
+          <div class="code-block">git switch -c fitur-login</div>
+          <div class="explanation">
+            <strong>Catatan:</strong> <code>git switch -c</code> adalah cara
+            modern untuk menggantikan <code>git checkout -b</code>. Perintah ini
+            sekaligus membuat branch dan berpindah ke dalamnya.
+          </div>
         </div>
 
         <div class="step-container" id="step2">
-          <h3>2. Membatalkan git add (Unstaging)</h3>
+          <h3>2. Bekerja di Dalam Branch</h3>
           <p>
-            Anda tidak sengaja melakukan
-            <code>git add rahasia.txt</code> sehingga file masuk ke
-            <strong>Staging Area</strong>. Untuk menurunkannya kembali ke
-            Working Directory <strong>tanpa menghapus isi kodenya</strong>:
+            Anda sekarang berada di "semesta paralel". Mari kita buat file baru
+            khusus untuk fitur ini:
           </p>
-          <div class="code-block">git restore --staged rahasia.txt</div>
-          <p>Untuk menurunkan semua file dari Staging sekaligus:</p>
-          <div class="code-block">git restore --staged .</div>
+          <pre class="code-block">
+echo "Halaman Login Keren" > login.html 
+git add login.html 
+git commit -m "Menambahkan halaman login"
+          </pre>
+          <p>
+            Coba cek isi folder Anda dengan perintah <code>ls</code> (di
+            Mac/Linux) atau <code>dir</code> (di Windows). Anda akan melihat ada
+            file <code>index.html</code> dan <code>login.html</code>.
+          </p>
         </div>
 
         <div class="step-container" id="step3">
-          <h3>3. Membuang Perubahan Secara Total</h3>
+          <h3>3. Berpindah Kembali ke Main</h3>
           <p>
-            File sudah di-stage (Staging Area), tapi Anda berubah pikiran. Anda
-            ingin mengeluarkan file itu dari Staging
-            <strong>DAN sekaligus menghapus semua perubahannya</strong> agar
-            kembali persis seperti commit terakhir:
+            Fitur login sudah selesai dikerjakan di cabangnya. Mari kita kembali
+            ke jalur utama (<strong>main</strong> atau <strong>master</strong>):
           </p>
-          <div class="code-block">
-            git restore --staged --worktree index.html
+          <div class="code-block">git switch main</div>
+          <div class="info">
+            <strong>Keajaiban Git:</strong><br />
+            Coba cek lagi isi folder Anda (ketik <code>ls</code> atau
+            <code>dir</code>). File <code>login.html</code>
+            <strong>menghilang!</strong> Jangan panik, file tersebut aman berada
+            di dimensi <em>branch fitur-login</em> dan belum ada di branch
+            <em>main</em>.
           </div>
         </div>
 
         <div class="step-container" id="step4">
-          <h3>4. Mengambil File dari Masa Lalu</h3>
+          <h3>4. Menggabungkan Branch (Merge)</h3>
           <p>
-            Anda bisa mengambil versi file dari commit terdahulu tanpa me-reset
-            seluruh proyek. Ambil <code>style.css</code> dari 2 commit yang
-            lalu:
+            Sekarang, saatnya menarik kode yang sudah matang dari cabang
+            <code>fitur-login</code> untuk digabungkan ke cabang
+            <code>main</code> yang aktif saat ini.
           </p>
-          <div class="code-block">git restore --source HEAD~2 style.css</div>
-          <p>Atau menggunakan ID Hash Commit spesifik:</p>
-          <div class="code-block">git restore --source 1a2b3c4 app.js</div>
-          <p><strong>🎉 Selamat! Praktikum Selesai!</strong></p>
+          <div class="code-block">git merge fitur-login</div>
+          <p>
+            Periksa lagi folder Anda. Tara! File
+            <code>login.html</code> sekarang sudah muncul di cabang utama.
+          </p>
+          <div class="explanation">
+            <strong>Fast-forward Merge:</strong> Git akan mendeteksi bahwa
+            cabang main belum berubah sejak branch dibuat, sehingga ia cukup
+            memajukan <em>pointer</em> ke depan (fast-forward).
+          </div>
+        </div>
+
+        <div class="step-container" id="step5">
+          <h3>5. Menghapus Branch (Opsional)</h3>
+          <p>
+            Karena fitur sudah berhasil di-merge dengan selamat, cabang
+            <code>fitur-login</code> sudah tidak dibutuhkan lagi. Praktik
+            terbaik adalah menghapusnya agar rapi:
+          </p>
+          <div class="code-block">git branch -d fitur-login</div>
+          <p>Untuk melihat daftar branch yang tersisa, Anda bisa mengetik:</p>
+          <div class="code-block">git branch</div>
+          <h3
+            style="text-align: center; color: var(--success); margin-top: 30px"
+          >
+            Selamat! Anda telah menguasai semesta paralel Git! 🚀
+          </h3>
         </div>
 
         <div class="navigation">
@@ -335,7 +401,8 @@
     </div>
 
     <script>
-     const failSound = new Audio(
+      // --- AUDIO KETAWA KUCING ---
+      const failSound = new Audio(
         "https://www.myinstants.com/media/sounds/cat-laugh-meme-1.mp3",
       );
 
@@ -366,10 +433,9 @@
         }
       });
 
-
       // --- LOGIKA NAVIGASI PRAKTIKUM ---
       let currentStep = 1;
-      const totalSteps = 4;
+      const totalSteps = 5;
 
       function changeStep(n) {
         document

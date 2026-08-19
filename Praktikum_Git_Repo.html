@@ -278,22 +278,37 @@
     </div>
 
     <script>
-      // --- LOKASI SCRIPT ANTI COPAS ---
-      document.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
+      const failSound = new Audio(
+        "https://www.myinstants.com/media/sounds/cat-laugh-meme-1.mp3",
+      );
+
+      // --- ANTI COPAS INTERCEPTOR ---
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
         alert("Ssstt... Klik Kanan dimatikan untuk modul ini.");
       });
-
-      document.addEventListener("copy", (event) => {
-        event.preventDefault();
+      document.addEventListener("copy", (e) => {
+        e.preventDefault();
+        failSound
+          .play()
+          .catch((err) => console.log("Audio autoplay blocked by browser"));
         alert(
-          "Dilarang copas! Biasakan mengetik perintah secara manual agar cepat hafal.",
+          "Mode Hardcore aktif! Ayo ketik manual agar muscle memory kamu terbentuk.",
         );
       });
-
-      document.addEventListener("cut", (event) => {
-        event.preventDefault();
+      document.addEventListener("cut", (e) => {
+        e.preventDefault();
       });
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
+          e.preventDefault();
+          failSound
+            .play()
+            .catch((err) => console.log("Audio autoplay blocked by browser"));
+          alert("Mode Hardcore aktif! Ayo ketik manual.");
+        }
+      });
+
 
       // --- LOKASI SCRIPT NAVIGASI STEP-BY-STEP ---
       let currentStep = 1;

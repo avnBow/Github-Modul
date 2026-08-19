@@ -1,310 +1,433 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Praktikum Interaktif: Git Revert</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modul Praktikum: Git Revert - Setana</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            color: #2c3e50;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-            /* Mencegah seleksi teks secara global */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+      :root {
+        --primary: #2ea44f;
+        --bg-dark: #0d1117;
+        --bg-panel: #161b22;
+        --text-light: #c9d1d9;
+        --border: #30363d;
+        --accent: #58a6ff;
+        --warning: #ff7b72;
+        --success: #3fb950;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        min-height: 100vh;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 15px;
+      }
+
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+      }
+
+      .subtitle {
+        color: var(--warning);
+        font-weight: bold;
+        font-size: 0.9em;
+        margin-top: 5px;
+      }
+
+      /* Layout 2 Kolom */
+      .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section {
+        background-color: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 25px;
+        flex: 1;
+        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .section h2 {
+        color: var(--accent);
+        margin-top: 0;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+      }
+
+      /* Visualisasi Git Revert */
+      .git-diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 30px 0;
+        padding: 20px;
+        background: #010409;
+        border-radius: 8px;
+        border: 1px dashed var(--border);
+      }
+
+      .git-box {
+        background-color: #21262d;
+        border: 1px solid #8b949e;
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        position: relative;
+      }
+
+      .git-box span {
+        display: block;
+        font-size: 0.85em;
+        color: #8b949e;
+        font-weight: normal;
+        margin-top: 5px;
+      }
+
+      .arrow-up {
+        text-align: center;
+        color: var(--text-light);
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+
+      /* Anti-Copas Class */
+      .no-select {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* Praktikum Steps */
+      .step-container {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+      }
+      .step-container.active {
+        display: block;
+      }
+
+      .code-block {
+        background-color: #000;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", Courier, monospace;
+        color: #7ee787;
+        border: 1px solid var(--border);
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .explanation,
+      .info {
+        background: rgba(88, 166, 255, 0.1);
+        border-left: 4px solid var(--accent);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 0.95em;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+
+      button {
+        background-color: #21262d;
+        color: #c9d1d9;
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+      button:hover:not(:disabled) {
+        background-color: #30363d;
+      }
+      button.btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border-color: rgba(27, 31, 36, 0.15);
+      }
+      button.btn-primary:hover {
+        background-color: #2c974b;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .progress {
+        text-align: center;
+        color: #8b949e;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        to {
+          opacity: 1;
+          transform: translateX(0);
         }
-        h1 {
-            text-align: center;
-            color: #1abc9c;
-            border-bottom: 3px solid #1abc9c;
-            padding-bottom: 10px;
-            margin-bottom: 5px;
-        }
-        h2 {
-            color: #16a085;
-            margin-top: 0;
-        }
-        .subtitle {
-            text-align: center;
-            color: #e67e22;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-        .progress-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 35px;
-            position: relative;
-        }
-        .progress-bar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: #ecf0f1;
-            z-index: 1;
-            transform: translateY(-50%);
-        }
-        .step-indicator {
-            flex: 1;
-            text-align: center;
-            padding: 12px 5px;
-            background: #ecf0f1;
-            margin: 0 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            transition: all 0.3s;
-            position: relative;
-            z-index: 2;
-        }
-        .step-indicator.active {
-            background: #1abc9c;
-            color: white;
-            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.4);
-            transform: scale(1.05);
-        }
-        .step-indicator.completed {
-            background: #27ae60;
-            color: white;
-        }
-        .step-container {
-            display: none;
-            animation: slideIn 0.4s ease-out;
-        }
-        .step-container.active {
-            display: block;
-        }
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            border-top: 1px solid #ecf0f1;
-            padding-top: 20px;
-        }
-        button {
-            padding: 12px 24px;
-            border: none;
-            background: #1abc9c;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s, transform 0.1s;
-        }
-        button:hover {
-            background: #16a085;
-        }
-        button:active {
-            transform: scale(0.98);
-        }
-        button:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .code-block {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Consolas', 'Courier New', Courier, monospace;
-            margin: 15px 0;
-            overflow-x: auto;
-            border-left: 5px solid #34495e;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .explanation {
-            background: #e8f8f5;
-            border-left: 5px solid #1abc9c;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .info {
-            background: #fdf2e9;
-            border-left: 5px solid #e67e22;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+      }
     </style>
-</head>
-<body oncopy="return false;" oncut="return false;" onpaste="return false;" oncontextmenu="return false;">
-
-<div class="container">
-    <h1>Praktikum Interaktif: Git Revert</h1>
-    <div class="subtitle">(Mode Hardcore: Anti Copy-Paste. Wajib Ketik Manual!)</div>
-
-    <div class="progress-bar">
-        <div class="step-indicator active" id="ind-1">1. Bikin Bug</div>
-        <div class="step-indicator" id="ind-2">2. Revert HEAD</div>
-        <div class="step-indicator" id="ind-3">3. Cek Histori</div>
-        <div class="step-indicator" id="ind-4">4. Revert No-Commit</div>
+  </head>
+  <body class="no-select">
+    <div class="header">
+      <h1>🚀 Modul Praktikum: Git Revert</h1>
+      <div class="subtitle">
+        (Mode Hardcore: Anti Copy-Paste. Wajib Ketik Manual!)
+      </div>
     </div>
 
-    <!-- STEP 1 -->
-    <div class="step-container active" id="step-1">
-        <h2>Langkah 1: Membuat Skenario Bug</h2>
-        <p>Mari kita simulasikan kondisi di mana kode kita sudah stabil, tapi tiba-tiba kita melakukan commit yang isinya *bug* (error).</p>
-        
-        <p>Ketik perintah-perintah ini di terminal Git Bash Anda secara berurutan:</p>
-        <div class="code-block">
-            <pre>mkdir latihan-revert
-cd latihan-revert
-git init
+    <div class="main-container">
+      <div class="section materi-section">
+        <h2>📚 Materi & Konsep</h2>
+        <p>
+          Berbeda dengan <code>git reset</code> yang bersifat destruktif dan
+          menghapus sejarah masa lalu, <code>git revert</code> adalah cara
+          paling <strong>aman</strong> untuk membatalkan perubahan, terutama
+          jika kode sudah telanjur di-push ke server.
+        </p>
 
-echo "Versi 1: Aplikasi berjalan lancar" > index.html
-git add index.html
-git commit -m "Commit 1: Versi stabil awal"
+        <h3>Visualisasi Histori Revert</h3>
+        <p>
+          Inilah yang terjadi pada riwayat <em>commit</em> Anda saat menggunakan
+          Git Revert. Masa lalu tidak dihapus, melainkan ditumpuk dengan commit
+          pembatalan baru.
+        </p>
 
-echo "Versi 2: Menambahkan fitur bug crash!" >> index.html
-git add index.html
-git commit -m "Commit 2: Yach.. aplikasi crash"</pre>
+        <div class="git-diagram">
+          <div class="git-box" style="border-color: var(--accent)">
+            🔵 Commit 3 (HEAD)
+            <span
+              >Pesan: "Revert: Commit 2"<br />Membalikkan semua kode yang ada di
+              Commit 2.</span
+            >
+          </div>
+
+          <div class="arrow-up">↑</div>
+
+          <div class="git-box" style="border-color: var(--warning)">
+            🔴 Commit 2
+            <span
+              >Pesan: "Yach.. aplikasi crash"<br />Berisi kode yang menyebabkan
+              error.</span
+            >
+          </div>
+
+          <div class="arrow-up">↑</div>
+
+          <div class="git-box" style="border-color: var(--success)">
+            🟢 Commit 1
+            <span
+              >Pesan: "Versi stabil awal"<br />Aplikasi berjalan lancar.</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="section praktik-section">
+        <h2>💻 Praktikum Step-by-Step</h2>
+        <div class="progress" id="progressText">Langkah 1 dari 4</div>
+
+        <div class="step-container active" id="step1">
+          <h3>1. Membuat Skenario Bug</h3>
+          <p>
+            Mari kita simulasikan kondisi di mana kode kita sudah stabil, tapi
+            tiba-tiba kita melakukan commit yang isinya <em>bug</em> (error).
+          </p>
+          <p>
+            Ketik perintah-perintah ini di terminal Git Bash Anda secara
+            berurutan:
+          </p>
+          <pre class="code-block">
+mkdir latihan-revert 
+cd latihan-revert 
+git init 
+echo "Versi 1: Aplikasi berjalan lancar" > index.html 
+git add index.html 
+git commit -m "Commit 1: Versi stabil awal" 
+echo "Versi 2: Menambahkan fitur bug crash!" >> index.html 
+git add index.html 
+git commit -m "Commit 2: Yach.. aplikasi crash"
+          </pre>
+          <div class="info">
+            <strong>Kondisi Saat Ini:</strong><br />
+            Anda telah membuat sebuah file <code>index.html</code>. Di Commit
+            ke-2, Anda tak sengaja menambahkan kode yang membuat aplikasi error.
+            Anggap saja Commit 2 ini sudah telanjur di-push ke server.
+          </div>
         </div>
 
-        <div class="info">
-            <strong>Kondisi Saat Ini:</strong><br>
-            Anda telah membuat sebuah file <code>index.html</code>. Di Commit ke-2, Anda tak sengaja menambahkan kode yang membuat aplikasi error. Anggap saja Commit 2 ini sudah telanjur di-push ke server (walau sekarang kita cuma main di lokal).
+        <div class="step-container" id="step2">
+          <h3>2. Menyelamatkan Keadaan (Revert Terakhir)</h3>
+          <p>
+            Aplikasi crash di server! Anda harus cepat-cepat membatalkan Commit
+            2. Karena (diasumsikan) sudah di-push,
+            <strong>jangan pakai <code>git reset</code></strong
+            >. Kita akan pakai <code>git revert</code> untuk membatalkan commit
+            paling ujung (HEAD):
+          </p>
+          <div class="code-block">git revert HEAD</div>
+          <div class="explanation">
+            <strong>Tindakan yang Dibutuhkan:</strong><br />
+            Git akan membuka text editor default Anda (biasanya Vim atau Nano)
+            untuk mengonfirmasi pesan commit pembatalan.<br />
+            - <em>Jika Vim:</em> Ketik <code>:wq</code> lalu tekan Enter.<br />
+            - <em>Jika Nano:</em> Tekan <code>Ctrl+X</code>, lalu
+            <code>Y</code>, lalu Enter.
+          </div>
+          <p>Sekarang, cek isi file Anda:</p>
+          <div class="code-block">cat index.html</div>
+          <p>Tulisan "Bug crash!" sudah otomatis dihapus oleh Git!</p>
         </div>
+
+        <div class="step-container" id="step3">
+          <h3>3. Mengecek Riwayat (History)</h3>
+          <p>
+            Ini adalah bagian terpenting untuk memahami perbedaan mendasar
+            antara Revert dan Reset. Mari kita lihat log commit Anda:
+          </p>
+          <div class="code-block">git log --oneline</div>
+          <div class="info">
+            <strong>Analisis Output:</strong><br />
+            Anda akan melihat ada 3 commit di layar. "Commit 2" yang error tadi
+            <strong>TIDAK HILANG</strong>. Ia masih ada di sana. Tapi, ada
+            commit ke-3 yang baru muncul (biasanya bernama
+            <em>"Revert: Commit 2"</em>). Teman satu tim Anda yang melakukan
+            pull tidak akan mengalami konflik riwayat.
+          </div>
+        </div>
+
+        <div class="step-container" id="step4">
+          <h3>4. Revert No-Commit (-n)</h3>
+          <p>
+            Kadang kita ingin membatalkan sesuatu, tapi mau mengedit filenya
+            sedikit lagi sebelum benar-benar di-commit ulang. Kita akan pakai
+            flag <code>-n</code> (no-commit).
+          </p>
+          <p>Coba batalkan lagi hasil revert yang barusan:</p>
+          <div class="code-block">git revert -n HEAD</div>
+          <p>Lihat status repositori sekarang:</p>
+          <div class="code-block">git status</div>
+          <div class="explanation">
+            <strong>Hasilnya:</strong><br />
+            Perubahan pembatalan sudah masuk ke <strong>Staging Area</strong>,
+            tapi belum menjadi sebuah commit. Anda bisa bebas memodifikasi file
+            sekarang, dan jika sudah siap, lakukan
+            <code>git commit</code> secara manual.
+          </div>
+          <h3
+            style="text-align: center; color: var(--success); margin-top: 30px"
+          >
+            Selamat! Anda mahir menyelamatkan kode di Production! 🚀
+          </h3>
+        </div>
+
+        <div class="navigation">
+          <button id="prevBtn" onclick="changeStep(-1)" disabled>
+            Pelajaran Sebelumnya
+          </button>
+          <button id="nextBtn" class="btn-primary" onclick="changeStep(1)">
+            Selanjutnya
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- STEP 2 -->
-    <div class="step-container" id="step-2">
-        <h2>Langkah 2: Menyelamatkan Keadaan (Revert Terakhir)</h2>
-        <p>Aplikasi crash di server! Anda harus cepat-cepat membatalkan Commit 2. Karena (diasumsikan) sudah di-push, <strong>jangan pakai <code>git reset</code></strong>. Kita akan pakai <code>git revert</code>.</p>
-        
-        <p>Kita akan membatalkan commit paling ujung (terakhir) yaitu HEAD:</p>
-        <div class="code-block">
-            <pre>git revert HEAD</pre>
-        </div>
+    <script>
+      const failSound = new Audio(
+        "https://www.myinstants.com/media/sounds/cat-laugh-meme-1.mp3",
+      );
 
-        <div class="explanation">
-            <strong>Apa yang terjadi setelah Anda menekan Enter?</strong><br>
-            Git akan langsung membuka text editor default Anda (biasanya Vim atau Nano). Git meminta Anda mengonfirmasi "pesan commit" baru. <br><br>
-            <em>Jika terbuka di Vim:</em> Ketik <code>:wq</code> lalu tekan Enter untuk menyimpan dan keluar.<br>
-            <em>Jika terbuka di Nano:</em> Tekan <code>Ctrl+X</code>, lalu <code>Y</code>, lalu Enter.
-        </div>
-        
-        <p>Sekarang, cek isi file Anda:</p>
-        <div class="code-block">
-            <pre>cat index.html</pre>
-        </div>
-        <p>Tulisan "Bug crash!" sudah otomatis dihapus oleh Git!</p>
-    </div>
+      // --- ANTI COPAS INTERCEPTOR ---
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        alert("Ssstt... Klik Kanan dimatikan untuk modul ini.");
+      });
+      document.addEventListener("copy", (e) => {
+        e.preventDefault();
+        failSound
+          .play()
+          .catch((err) => console.log("Audio autoplay blocked by browser"));
+        alert(
+          "Mode Hardcore aktif! Ayo ketik manual agar muscle memory kamu terbentuk.",
+        );
+      });
+      document.addEventListener("cut", (e) => {
+        e.preventDefault();
+      });
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
+          e.preventDefault();
+          failSound
+            .play()
+            .catch((err) => console.log("Audio autoplay blocked by browser"));
+          alert("Mode Hardcore aktif! Ayo ketik manual.");
+        }
+      });
 
-    <!-- STEP 3 -->
-    <div class="step-container" id="step-3">
-        <h2>Langkah 3: Mengecek Riwayat (History)</h2>
-        <p>Ini adalah bagian terpenting untuk memahami perbedaan mendasar antara Revert dan Reset.</p>
-        
-        <p>Mari kita lihat log commit Anda:</p>
-        <div class="code-block">
-            <pre>git log --oneline</pre>
-        </div>
 
-        <div class="explanation">
-            <strong>Analisis Output:</strong><br>
-            Anda akan melihat ada 3 commit di layar. "Commit 2" yang error tadi <strong>TIDAK HILANG</strong>. Ia masih ada di sana. Tapi, ada commit ke-3 yang baru muncul (biasanya bernama <em>"Revert: Commit 2"</em>).<br><br>
-            Inilah kenapa Git Revert sangat aman: Ia tidak menghapus sejarah masa lalu, melainkan menumpuk masa lalu dengan commit pembatalan baru. Teman satu tim Anda yang melakukan pull tidak akan bentrok riwayatnya.
-        </div>
-    </div>
+      // --- LOGIKA NAVIGASI PRAKTIKUM ---
+      let currentStep = 1;
+      const totalSteps = 4;
 
-    <!-- STEP 4 -->
-    <div class="step-container" id="step-4">
-        <h2>Langkah 4: Revert tapi Jangan Langsung Commit</h2>
-        <p>Kadang kita ingin membatalkan sesuatu, tapi kita mau mengedit filenya sedikit lagi sebelum benar-benar di-commit ulang.</p>
-        
-        <p>Kita akan pakai flag <code>-n</code> (no-commit). Coba jalankan ini (kita batalkan lagi hasil revert yang barusan):</p>
-        
-        <div class="code-block">
-            <pre>git revert -n HEAD</pre>
-        </div>
+      function changeStep(n) {
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("active");
+        currentStep += n;
 
-        <p>Lihat status repositori sekarang:</p>
-        <div class="code-block">
-            <pre>git status</pre>
-        </div>
+        if (currentStep < 1) currentStep = 1;
+        if (currentStep > totalSteps) currentStep = totalSteps;
 
-        <div class="explanation">
-            <strong>Hasilnya:</strong><br>
-            Perubahan pembatalan sudah masuk ke <strong>Staging Area</strong>, tapi belum menjadi sebuah commit. Anda bisa bebas memodifikasi file <code>index.html</code> sekarang. Jika sudah siap, Anda harus melakukan commit manual dengan perintah <code>git commit</code>.
-        </div>
-        
-        <h3 style="text-align:center; color:#27ae60; margin-top:30px;">Selamat! Anda sudah mahir menyelamatkan kode di Production! 🚀</h3>
-    </div>
+        document.getElementById(`step${currentStep}`).classList.add("active");
+        document.getElementById("progressText").innerText =
+          `Langkah ${currentStep} dari ${totalSteps}`;
 
-    <div class="nav-buttons">
-        <button id="prevBtn" onclick="prevStep()" disabled>&#8592; Sebelumnya</button>
-        <button id="nextBtn" onclick="nextStep()">Selanjutnya &#8594;</button>
-    </div>
-</div>
+        document.getElementById("prevBtn").disabled = currentStep === 1;
 
-<script>
-    let currentStep = 1;
-    const totalSteps = 4;
-
-    function showStep(step) {
-        document.querySelectorAll('.step-container').forEach(el => {
-            el.classList.remove('active');
-        });
-        
-        document.getElementById(`step-${step}`).classList.add('active');
-
-        document.querySelectorAll('.step-indicator').forEach((el, index) => {
-            el.classList.remove('active', 'completed');
-            if (index + 1 < step) {
-                el.classList.add('completed');
-            } else if (index + 1 === step) {
-                el.classList.add('active');
-            }
-        });
-
-        document.getElementById('prevBtn').disabled = step === 1;
-        
-        const nextBtn = document.getElementById('nextBtn');
-        if (step === totalSteps) {
-            nextBtn.style.display = 'none';
+        const nextBtn = document.getElementById("nextBtn");
+        if (currentStep === totalSteps) {
+          nextBtn.innerText = "Selesai";
+          nextBtn.disabled = true;
+          nextBtn.classList.remove("btn-primary");
         } else {
-            nextBtn.style.display = 'block';
+          nextBtn.innerText = "Selanjutnya";
+          nextBtn.disabled = false;
+          nextBtn.classList.add("btn-primary");
         }
-    }
-
-    function nextStep() {
-        if (currentStep < totalSteps) {
-            currentStep++;
-            showStep(currentStep);
-        }
-    }
-
-    function prevStep() {
-        if (currentStep > 1) {
-            currentStep--;
-            showStep(currentStep);
-        }
-    }
-</script>
-
-</body>
+      }
+    </script>
+  </body>
 </html>
